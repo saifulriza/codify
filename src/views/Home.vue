@@ -174,7 +174,7 @@ export default {
     onMounted(() => {
       initEditor(
         "editor-section",
-        "function hello() {\n\talert('Hello world!');\n}",
+        "function hi() {\n\talert('Hello world!');\n}",
         "javascript",
         "vs-dark"
       );
@@ -182,7 +182,6 @@ export default {
       addResize(".resize");
       addResize(".xterm-screen");
       addDrag(".drag");
-      console.log(nama.split(".").pop());
     });
 
     return { showFolder, folder, showCode };
