@@ -174,7 +174,7 @@ export default {
     onMounted(() => {
       initEditor(
         "editor-section",
-        "function hi() {\n\talert('Hello world!');\n}",
+        "function hello() {\n\talert('Hello world!');\n}",
         "javascript",
         "vs-dark"
       );
