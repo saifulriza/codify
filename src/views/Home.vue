@@ -47,6 +47,7 @@ import { onMounted, ref } from "vue";
 import { get, set } from "idb-keyval";
 import interact from "interactjs";
 import { fileOpen, directoryOpen, fileSave } from "browser-fs-access";
+import detectLang from "@/utils/LanguangeDetect";
 
 export default {
   name: "Home",
@@ -96,16 +97,18 @@ export default {
         },
       });
     }
-
+    const getExstension = (path) => {
+      console.log("path", path);
+      return path.split(".").pop();
+    };
     const showCode = async (path) => {
-      console.log("clicked");
+      const ext = getExstension(path);
+      let lang;
       const code = await get(path).then((code) => {
-        initEditor(
-          "editor-section-2",
-          code,
-          "javascript",
-          "monokai-transparent-2"
-        );
+        detectLang(ext).then((lang) => {
+          console.log("hasil", lang);
+          initEditor("editor-section-2", code, lang, "monokai-transparent-2");
+        });
       });
     };
 

@@ -1,9 +1,8 @@
-export default class LanguageDetect {
-  construct(lang) {
-    this.lang = lang;
-  }
-
-  detect() {
-    console.log("detetc");
+import language from "./LanguageList";
+export default async function detectLang(ext) {
+  for (const lang in language) {
+    if (ext == lang) {
+      return language[lang];
+    }
   }
 }
