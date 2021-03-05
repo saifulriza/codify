@@ -11,19 +11,19 @@
         <pre id="pre"></pre>
       </div>
       <div class="col-xl-10">
-        <div>
-          <div class="drag p-2 m-2">
+        <div id="base-editor">
+          <div class="drag p-2 m-2" id="drag">
             <div
               id="editor-section"
-              class="resize p-2 m-2"
-              style="height:80vh; widht:90vw; padding:6px"
+              class="resize p-2 m-2 editor-section"
+              style="height:80vh; widht:90vw; padding:6px; z-index:1"
             ></div>
+            <!-- <div
+              id="source-editor"
+              class="resize p-2 m-2 editor-section"
+              style="height:80vh; widht:90vw; padding:6px; z-index:1"
+            ></div> -->
           </div>
-
-          <div
-            id="editor-section-2"
-            style="height:80vh; widht:90vw; padding:6px"
-          ></div>
         </div>
         <terminal class="m-2" />
       </div>
@@ -48,6 +48,10 @@ import { get, set } from "idb-keyval";
 import interact from "interactjs";
 import { fileOpen, directoryOpen, fileSave } from "browser-fs-access";
 import detectLang from "@/utils/LanguangeDetect";
+// import * as MonacoCollabExt from "@convergencelabs/monaco-collab-ext";
+import Convergence from "@convergence/convergence";
+import MonacoConvergenceAdapter from "@/utils/EditorAdapter";
+import checkId from "@/utils/StrangerCollaboration";
 
 export default {
   name: "Home",
@@ -59,6 +63,36 @@ export default {
     let codeEditor = null;
     let nama = "src/composnent/file.vue";
     let folder = ref([]);
+    let curId = ref("");
+
+    const CONVERGENCE_URL =
+      "http://192.168.99.100:8000/api/realtime/convergence/default";
+
+    const sourceUser = {
+      id: "source",
+      label: "Source User",
+      color: "transparent",
+    };
+
+    const username = "User-" + Math.round(Math.random() * 10000);
+    const staticUser = {
+      id: "static",
+      label: "Static User",
+      color: "blue",
+    };
+
+    function createElemen(id) {
+      let elem = document.createElement("div");
+      let base = document.getElementById("base-editor");
+      elem.setAttribute("id", id);
+      elem.setAttribute("class", "drag p-2 m-2 editor-section");
+      elem.setAttribute(
+        "style",
+        "height:80vh; widht:90vw; padding:6px; z-index:1"
+      );
+      base.appendChild(elem);
+    }
+
     function initEditor(el, val, lang, theme) {
       codeEditor = monaco.editor.create(document.getElementById(el), {
         automaticLayout: true,
@@ -68,6 +102,123 @@ export default {
         minimap: {
           enabled: false,
         },
+      });
+
+      // baru
+      let domain;
+
+      Convergence.connectAnonymously(CONVERGENCE_URL, username)
+        .then((d) => {
+          domain = d;
+          console.log("domaiinnya", d);
+          // Now open the model, creating it using the initial data if it does not exist.
+          return domain.models().openAutoCreate({
+            collection: "editor-section",
+            id: checkId(),
+            data: {
+              text: val,
+            },
+          });
+        })
+        .then((model) => {
+          const adapter = new MonacoConvergenceAdapter(
+            codeEditor,
+            model.elementAt("text")
+          );
+          adapter.bind();
+          console.log("loaded");
+        })
+        .catch((error) => {
+          console.error("Could not open model ", error);
+        });
+
+      // lama
+
+      // const remoteCursorManager = new MonacoCollabExt.RemoteCursorManager({
+      //   editor: codeEditor,
+      //   tooltips: true,
+      //   tooltipDuration: 2,
+      // });
+      // const sourceUserCursor = remoteCursorManager.addCursor(
+      //   sourceUser.id,
+      //   sourceUser.color,
+      //   sourceUser.label
+      // );
+      // const staticUserCursor = remoteCursorManager.addCursor(
+      //   staticUser.id,
+      //   staticUser.color,
+      //   staticUser.label
+      // );
+      // const remoteSelectionManager = new MonacoCollabExt.RemoteSelectionManager(
+      //   { editor: codeEditor }
+      // );
+      // remoteSelectionManager.addSelection(
+      //   sourceUser.id,
+      //   sourceUser.color,
+      //   sourceUser.label
+      // );
+      // remoteSelectionManager.addSelection(
+      //   staticUser.id,
+      //   staticUser.color,
+      //   staticUser.label
+      // );
+
+      // const targetContentManager = new MonacoCollabExt.EditorContentManager({
+      //   editor: codeEditor,
+      // });
+      // const source = monaco.editor.create(
+      //   document.getElementById("source-editor"),
+      //   {
+      //     value: val,
+      //     theme: theme,
+      //     language: lang,
+      //   }
+      // );
+
+      // source.onDidChangeCursorPosition((e) => {
+      //   const offset = source.getModel().getOffsetAt(e.position);
+      //   sourceUserCursor.setOffset(offset);
+      // });
+
+      // source.onDidChangeCursorSelection((e) => {
+      //   const startOffset = source
+      //     .getModel()
+      //     .getOffsetAt(e.selection.getStartPosition());
+      //   const endOffset = source
+      //     .getModel()
+      //     .getOffsetAt(e.selection.getEndPosition());
+      //   remoteSelectionManager.setSelectionOffsets(
+      //     sourceUser.id,
+      //     startOffset,
+      //     endOffset
+      //   );
+      // });
+
+      // const sourceContentManager = new MonacoCollabExt.EditorContentManager({
+      //   editor: source,
+      //   onInsert(index, text) {
+      //     codeEditor.updateOptions({ readOnly: false });
+      //     targetContentManager.insert(index, text);
+      //     codeEditor.updateOptions({ readOnly: true });
+      //   },
+      //   onReplace(index, length, text) {
+      //     codeEditor.updateOptions({ readOnly: false });
+      //     targetContentManager.replace(index, length, text);
+      //     codeEditor.updateOptions({ readOnly: true });
+      //   },
+      //   onDelete(index, length) {
+      //     codeEditor.updateOptions({ readOnly: false });
+      //     targetContentManager.delete(index, length);
+      //     codeEditor.updateOptions({ readOnly: true });
+      //   },
+      // });
+    }
+    function setZIndex() {
+      let elem = document.getElementById("drag");
+      elem.addEventListener("dragend", function(event) {
+        console.log("mulai set z index");
+        event.target.style.zIndex = "2";
+        console.log("selesai set z index");
       });
     }
 
@@ -86,13 +237,16 @@ export default {
       interact(el).draggable({
         listeners: {
           start(event) {
-            console.log(event.type, event.target);
+            console.log("id nya", event.target.id);
           },
           move(event) {
             position.x += event.dx;
             position.y += event.dy;
 
             event.target.style.transform = `translate(${position.x}px, ${position.y}px)`;
+          },
+          end(event) {
+            console.log("dapat idnya", event.target.id);
           },
         },
       });
@@ -104,10 +258,12 @@ export default {
     const showCode = async (path) => {
       const ext = getExstension(path);
       let lang;
-      const code = await get(path).then((code) => {
+      createElemen(path);
+      const code = get(path).then((code) => {
+        console.log("kodenya 1", code);
         detectLang(ext).then((lang) => {
-          console.log("hasil", lang);
-          initEditor("editor-section-2", code, lang, "monokai-transparent-2");
+          console.log("kodenya", code);
+          initEditor(path, code, lang, "monokai-transparent-2");
         });
       });
     };
@@ -185,6 +341,7 @@ export default {
       addResize(".resize");
       addResize(".xterm-screen");
       addDrag(".drag");
+      setZIndex();
     });
 
     return { showFolder, folder, showCode };
@@ -192,13 +349,14 @@ export default {
 };
 </script>
 <style lang="scss">
-#editor-section {
+.editor-section {
   border: 1px solid rgb(92, 92, 92);
 }
-#editor-section-2 {
-  border: 1px solid rgb(92, 92, 92);
-}
+
 .monaco-scrollable-element .editor-scrollable {
   background: transparent;
+}
+.monaco-remote-cursor {
+  background: none !important;
 }
 </style>
