@@ -38,7 +38,6 @@ export default {
     const file = ref(props.data);
     let isOpen = ref(false);
     const isFolder = computed(() => {
-      console.log(file.value);
       if (typeof file.value !== "undefined") {
         if (typeof file.value !== "undefined") {
           if (typeof file.value.children !== "undefined") {
@@ -62,10 +61,6 @@ export default {
       }
     }
 
-    function showPath() {
-      console.log("path", file.value.path);
-    }
-
     function makeFolder() {
       if (!isFolder) {
         emit("make-folder", props.data);
@@ -74,22 +69,15 @@ export default {
     }
     watch(
       () => props.data,
-      (first, second) => {
-        console.log("Watch data:", first, second);
-      }
+      (first, second) => {}
     );
-    onMounted(() => {
-      //   console.log("aaa", file.value[Object.keys(file.value)].children);
-      // console.log("aaa", file.value);
-      // console.log("aaa", Object.keys(file.value));
-    });
+    onMounted(() => {});
     return {
       file,
       isFolder,
       isOpen,
       toggle,
       makeFolder,
-      showPath,
       showCode,
     };
   },
