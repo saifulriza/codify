@@ -2,9 +2,6 @@
   <div id="container-fluid">
     <div class="row m-2">
       <div class="col-xl-2">
-        <!-- <span v-for="(name, index) in folder" :key="index">
-          <folder-list :name="name" class="m-1" @click="showCode(name)" />
-        </span> -->
         <div class="btn btn-success" @click="showFolder">
           Open folder
         </div>
@@ -14,7 +11,6 @@
             v-for="(child, index) in tree"
             :key="index"
             :data="child"
-            @click="showCode(child.path)"
           ></file-view>
         </ul>
         <pre id="pre"></pre>
@@ -27,23 +23,10 @@
               class="resize p-2 m-2 editor-section"
               style="height:80vh; widht:90vw; padding:6px; z-index:1"
             ></div>
-            <!-- <div
-              id="source-editor"
-              class="resize p-2 m-2 editor-section"
-              style="height:80vh; widht:90vw; padding:6px; z-index:1"
-            ></div> -->
           </div>
         </div>
-        <!-- <terminal class="m-2" /> -->
       </div>
     </div>
-    <!-- <button class="btn btn-primary" @click="runCode">Run</button> -->
-
-    <!-- <div class="row m-2 d-flex flex-row justify-content-end">
-      <div class="col-xl-10">
-        <terminal class="m-2" />
-      </div>
-    </div> -->
   </div>
 </template>
 
@@ -52,12 +35,11 @@ import "bootstrap";
 
 import Terminal from "@/components/Terminal";
 import FolderList from "@/components/FolderList";
-import { onMounted, reactive, ref, watch, computed } from "vue";
+import { onMounted, ref } from "vue";
 import { get, set } from "idb-keyval";
 import interact from "interactjs";
-import { fileOpen, directoryOpen, fileSave } from "browser-fs-access";
-
-// import * as MonacoCollabExt from "@convergencelabs/monaco-collab-ext";
+import { directoryOpen } from "browser-fs-access";
+import { editor } from "monaco-editor";
 
 import { addNode, tree } from "@/utils/Tree";
 import fileView from "@/components/FileView";
@@ -78,45 +60,28 @@ export default {
     function setZIndex() {
       let elem = document.getElementById("drag");
       elem.addEventListener("dragend", function(event) {
-        console.log("mulai set z index");
         event.target.style.zIndex = "2";
-        console.log("selesai set z index");
       });
-    }
-
-    async function changeTheme() {
-      await fetch("/themes/monokai-transparent-2.json")
-        .then((data) => data.json())
-        .then((data) => {
-          monaco.editor.defineTheme("monokai-transparent-2", data);
-          monaco.editor.mi;
-          monaco.editor.setTheme("monokai-transparent-2");
-        });
     }
 
     function addDrag(el) {
       const position = { x: 0, y: 0 };
       interact(el).draggable({
         listeners: {
-          start(event) {
-            console.log("id nya", event.target.id);
-          },
+          start(event) {},
           move(event) {
             position.x += event.dx;
             position.y += event.dy;
 
             event.target.style.transform = `translate(${position.x}px, ${position.y}px)`;
           },
-          end(event) {
-            console.log("dapat idnya", event.target.id);
-          },
+          end(event) {},
         },
       });
     }
 
     const getFile = (blobs) => {
       const panjang = blobs.length;
-      console.log(blobs);
       Promise.all(
         blobs.map(async (blob, i) => {
           if (blob.name) {
@@ -169,7 +134,18 @@ export default {
       });
     }
 
+    async function changeTheme() {
+      await fetch("/themes/monokai-transparent-2.json")
+        .then((data) => data.json())
+        .then((data) => {
+          editor.defineTheme("monokai-transparent-2", data);
+          editor.mi;
+          editor.setTheme("monokai-transparent-2");
+        });
+    }
+
     onMounted(() => {
+      changeTheme();
       initEditor(
         "editor-section",
         "function hello() {\n\talert('Hello world!');\n}",
@@ -183,7 +159,6 @@ export default {
         type: "file",
         path: "/storage/test/asdf/2.txt",
       });
-      changeTheme();
       addResize(".resize");
       addResize(".xterm-screen");
       addDrag(".drag");
@@ -200,7 +175,7 @@ export default {
 }
 
 .monaco-scrollable-element .editor-scrollable {
-  background: transparent;
+  background: transparent !important;
 }
 .monaco-remote-cursor {
   background: none !important;

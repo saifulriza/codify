@@ -12,7 +12,7 @@ export default async function showCode(path) {
     createElement(path);
     const code = get(path).then((code) => {
       detectLang(ext).then((lang) => {
-        initEditor(path, code, lang, "monokai");
+        initEditor(path, code, lang, "monokai-transparent-2");
       });
     });
   } else {

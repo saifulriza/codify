@@ -36,8 +36,6 @@ export default function initEditor(el, val, lang, theme) {
   Convergence.connectAnonymously(CONVERGENCE_URL, username)
     .then((d) => {
       domain = d;
-      console.log("domaiinnya", d);
-      // Now open the model, creating it using the initial data if it does not exist.
       return domain.models().openAutoCreate({
         collection: "editor-section",
         id: checkId(),
@@ -52,7 +50,6 @@ export default function initEditor(el, val, lang, theme) {
         model.elementAt("text")
       );
       adapter.bind();
-      console.log("loaded");
     })
     .catch((error) => {
       console.error("Could not open model ", error);

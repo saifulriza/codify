@@ -5,7 +5,7 @@
         'btn btn-success btn-sm m-1': isFolder,
         'btn btn-primary btn-sm m-1': !isFolder,
       }"
-      @click="isFolder ? toggle() : showPath()"
+      @click="isFolder ? toggle() : showCode(file.path)"
       @dblclick="makeFolder"
     >
       {{ file.name }}
@@ -18,7 +18,6 @@
         v-for="(child, index) in file.children"
         :key="index"
         :data="child"
-        @click="showCode(child.path)"
         @make-folder="emit('make-folder', event)"
         @add-item="emit('add-item', event)"
       ></file-view>
