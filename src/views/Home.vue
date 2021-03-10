@@ -1,7 +1,7 @@
 <template>
   <div id="container-fluid">
     <div class="row m-2">
-      <div class="col-xl-2">
+      <div class="col-xl-2 drag resize">
         <div class="btn btn-success" @click="showFolder">
           Open folder
         </div>
@@ -13,7 +13,6 @@
             :data="child"
           ></file-view>
         </ul>
-        <pre id="pre"></pre>
       </div>
       <div class="col-xl-10">
         <div id="base-editor"></div>
@@ -146,6 +145,25 @@ export default {
 };
 </script>
 <style lang="scss">
+// .overflow-x {
+//   overflow-x: scroll;
+//   overflow-y: hidden;
+// }
+
+// .overflow-x::-webkit-scrollbar {
+//   width: 12px;
+//   background-color: #f5f5f5;
+// }
+// .overflow-x::-webkit-scrollbar-thumb {
+//   border-radius: 10px;
+//   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+//   background-color: #585858;
+// }
+// .overflow-x::-webkit-scrollbar-track {
+//   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+//   border-radius: 10px;
+//   background-color: #f5f5f5;
+// }
 ul {
   list-style: none;
 }
