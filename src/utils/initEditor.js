@@ -2,7 +2,6 @@ import * as monaco from "monaco-editor";
 import Convergence from "@convergence/convergence";
 import MonacoConvergenceAdapter from "@/utils/EditorAdapter";
 import checkId from "@/utils/StrangerCollaboration";
-
 const CONVERGENCE_URL =
   "http://192.168.99.100:8000/api/realtime/convergence/default";
 
@@ -12,7 +11,7 @@ const CONVERGENCE_URL =
 // color: "transparent",
 // };
 
-const username = "User-" + Math.round(Math.random() * 10000);
+const username = "Coder-" + Math.round(Math.random() * 10000);
 // const staticUser = {
 // id: "static",
 // label: "Static User",
@@ -45,6 +44,7 @@ export default function initEditor(el, val, lang, theme) {
       });
     })
     .then((model) => {
+      console.log("connected to websocket");
       const adapter = new MonacoConvergenceAdapter(
         codeEditor,
         model.elementAt("text")

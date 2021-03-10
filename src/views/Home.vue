@@ -16,15 +16,7 @@
         <pre id="pre"></pre>
       </div>
       <div class="col-xl-10">
-        <div id="base-editor">
-          <div class="drag p-2 m-2" id="drag">
-            <div
-              id="editor-section"
-              class="resize p-2 m-2 editor-section"
-              style="height:80vh; widht:90vw; padding:6px; z-index:1"
-            ></div>
-          </div>
-        </div>
+        <div id="base-editor"></div>
       </div>
     </div>
   </div>
@@ -44,7 +36,6 @@ import { editor } from "monaco-editor";
 import { addNode, tree } from "@/utils/Tree";
 import fileView from "@/components/FileView";
 import showCode from "@/utils/showCode";
-import initEditor from "@/utils/initEditor";
 export default {
   name: "Home",
   components: {
@@ -53,16 +44,15 @@ export default {
     FolderList,
   },
   setup(props, ctx) {
-    let nodes = ref([]);
     let folder = ref([]);
     let folderTree = ref([]);
 
-    function setZIndex() {
-      let elem = document.getElementById("drag");
-      elem.addEventListener("dragend", function(event) {
-        event.target.style.zIndex = "2";
-      });
-    }
+    // function setZIndex() {
+    //   let elem = document.getElementById("drag");
+    //   elem.addEventListener("dragend", function(event) {
+    //     event.target.style.zIndex = "2";
+    //   });
+    // }
 
     function addDrag(el) {
       const position = { x: 0, y: 0 };
@@ -81,7 +71,6 @@ export default {
     }
 
     const getFile = (blobs) => {
-      const panjang = blobs.length;
       Promise.all(
         blobs.map(async (blob, i) => {
           if (blob.name) {
@@ -146,23 +135,10 @@ export default {
 
     onMounted(() => {
       changeTheme();
-      initEditor(
-        "editor-section",
-        "function hello() {\n\talert('Hello world!');\n}",
-        "javascript",
-        "vs-dark"
-      );
-
-      nodes.value.push({
-        name: "2.txt",
-        size: 0,
-        type: "file",
-        path: "/storage/test/asdf/2.txt",
-      });
-      addResize(".resize");
       addResize(".xterm-screen");
       addDrag(".drag");
-      setZIndex();
+      addResize(".resize");
+      // setZIndex();
     });
 
     return { showFolder, folder, showCode, tree, folderTree };
@@ -170,6 +146,9 @@ export default {
 };
 </script>
 <style lang="scss">
+ul {
+  list-style: none;
+}
 .editor-section {
   border: 1px solid rgb(92, 92, 92);
 }

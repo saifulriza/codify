@@ -2,8 +2,8 @@
   <li>
     <div
       :class="{
-        'btn btn-success btn-sm m-1': isFolder,
-        'btn btn-primary btn-sm m-1': !isFolder,
+        'btn btn-outline-success btn-sm m-1': isFolder,
+        'btn btn-outline-primary btn-sm m-1': !isFolder,
       }"
       @click="isFolder ? toggle() : showCode(file.path)"
       @dblclick="makeFolder"
