@@ -5,7 +5,6 @@ export function addNode(obj) {
   let splitpath = obj.webkitRelativePath.replace(/^\/|\/$/g, "").split("/");
 
   for (let i = 0; i < splitpath.length; i++) {
-    console.log("1", splitpath[i]);
     let node = {
       name: splitpath[i],
       type: "directory",
