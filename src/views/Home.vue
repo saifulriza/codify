@@ -2,12 +2,21 @@
   <div id="container-fluid">
     <div class="row m-2">
       <div class="col-xl-2">
-        <span v-for="(name, index) in folder" :key="index">
+        <!-- <span v-for="(name, index) in folder" :key="index">
           <folder-list :name="name" class="m-1" @click="showCode(name)" />
-        </span>
+        </span> -->
         <div class="btn btn-success" @click="showFolder">
           Open folder
         </div>
+        <ul id="demo">
+          <file-view
+            class="item"
+            v-for="(child, index) in tree"
+            :key="index"
+            :data="child"
+            @click="showCode(child.path)"
+          ></file-view>
+        </ul>
         <pre id="pre"></pre>
       </div>
       <div class="col-xl-10">
@@ -25,7 +34,7 @@
             ></div> -->
           </div>
         </div>
-        <terminal class="m-2" />
+        <!-- <terminal class="m-2" /> -->
       </div>
     </div>
     <!-- <button class="btn btn-primary" @click="runCode">Run</button> -->
@@ -40,179 +49,32 @@
 
 <script>
 import "bootstrap";
-import * as monaco from "monaco-editor";
+
 import Terminal from "@/components/Terminal";
 import FolderList from "@/components/FolderList";
-import { onMounted, ref } from "vue";
+import { onMounted, reactive, ref, watch, computed } from "vue";
 import { get, set } from "idb-keyval";
 import interact from "interactjs";
 import { fileOpen, directoryOpen, fileSave } from "browser-fs-access";
-import detectLang from "@/utils/LanguangeDetect";
-// import * as MonacoCollabExt from "@convergencelabs/monaco-collab-ext";
-import Convergence from "@convergence/convergence";
-import MonacoConvergenceAdapter from "@/utils/EditorAdapter";
-import checkId from "@/utils/StrangerCollaboration";
 
+// import * as MonacoCollabExt from "@convergencelabs/monaco-collab-ext";
+
+import { addNode, tree } from "@/utils/Tree";
+import fileView from "@/components/FileView";
+import showCode from "@/utils/showCode";
+import initEditor from "@/utils/initEditor";
 export default {
   name: "Home",
   components: {
+    fileView,
     Terminal,
     FolderList,
   },
   setup(props, ctx) {
-    let codeEditor = null;
-    let nama = "src/composnent/file.vue";
+    let nodes = ref([]);
     let folder = ref([]);
-    let curId = ref("");
+    let folderTree = ref([]);
 
-    const CONVERGENCE_URL =
-      "http://192.168.99.100:8000/api/realtime/convergence/default";
-
-    const sourceUser = {
-      id: "source",
-      label: "Source User",
-      color: "transparent",
-    };
-
-    const username = "User-" + Math.round(Math.random() * 10000);
-    const staticUser = {
-      id: "static",
-      label: "Static User",
-      color: "blue",
-    };
-
-    function createElemen(id) {
-      let elem = document.createElement("div");
-      let base = document.getElementById("base-editor");
-      elem.setAttribute("id", id);
-      elem.setAttribute("class", "drag p-2 m-2 editor-section");
-      elem.setAttribute(
-        "style",
-        "height:80vh; widht:90vw; padding:6px; z-index:1"
-      );
-      base.appendChild(elem);
-    }
-
-    function initEditor(el, val, lang, theme) {
-      codeEditor = monaco.editor.create(document.getElementById(el), {
-        automaticLayout: true,
-        value: val,
-        language: lang,
-        theme: theme,
-        minimap: {
-          enabled: false,
-        },
-      });
-
-      // baru
-      let domain;
-
-      Convergence.connectAnonymously(CONVERGENCE_URL, username)
-        .then((d) => {
-          domain = d;
-          console.log("domaiinnya", d);
-          // Now open the model, creating it using the initial data if it does not exist.
-          return domain.models().openAutoCreate({
-            collection: "editor-section",
-            id: checkId(),
-            data: {
-              text: val,
-            },
-          });
-        })
-        .then((model) => {
-          const adapter = new MonacoConvergenceAdapter(
-            codeEditor,
-            model.elementAt("text")
-          );
-          adapter.bind();
-          console.log("loaded");
-        })
-        .catch((error) => {
-          console.error("Could not open model ", error);
-        });
-
-      // lama
-
-      // const remoteCursorManager = new MonacoCollabExt.RemoteCursorManager({
-      //   editor: codeEditor,
-      //   tooltips: true,
-      //   tooltipDuration: 2,
-      // });
-      // const sourceUserCursor = remoteCursorManager.addCursor(
-      //   sourceUser.id,
-      //   sourceUser.color,
-      //   sourceUser.label
-      // );
-      // const staticUserCursor = remoteCursorManager.addCursor(
-      //   staticUser.id,
-      //   staticUser.color,
-      //   staticUser.label
-      // );
-      // const remoteSelectionManager = new MonacoCollabExt.RemoteSelectionManager(
-      //   { editor: codeEditor }
-      // );
-      // remoteSelectionManager.addSelection(
-      //   sourceUser.id,
-      //   sourceUser.color,
-      //   sourceUser.label
-      // );
-      // remoteSelectionManager.addSelection(
-      //   staticUser.id,
-      //   staticUser.color,
-      //   staticUser.label
-      // );
-
-      // const targetContentManager = new MonacoCollabExt.EditorContentManager({
-      //   editor: codeEditor,
-      // });
-      // const source = monaco.editor.create(
-      //   document.getElementById("source-editor"),
-      //   {
-      //     value: val,
-      //     theme: theme,
-      //     language: lang,
-      //   }
-      // );
-
-      // source.onDidChangeCursorPosition((e) => {
-      //   const offset = source.getModel().getOffsetAt(e.position);
-      //   sourceUserCursor.setOffset(offset);
-      // });
-
-      // source.onDidChangeCursorSelection((e) => {
-      //   const startOffset = source
-      //     .getModel()
-      //     .getOffsetAt(e.selection.getStartPosition());
-      //   const endOffset = source
-      //     .getModel()
-      //     .getOffsetAt(e.selection.getEndPosition());
-      //   remoteSelectionManager.setSelectionOffsets(
-      //     sourceUser.id,
-      //     startOffset,
-      //     endOffset
-      //   );
-      // });
-
-      // const sourceContentManager = new MonacoCollabExt.EditorContentManager({
-      //   editor: source,
-      //   onInsert(index, text) {
-      //     codeEditor.updateOptions({ readOnly: false });
-      //     targetContentManager.insert(index, text);
-      //     codeEditor.updateOptions({ readOnly: true });
-      //   },
-      //   onReplace(index, length, text) {
-      //     codeEditor.updateOptions({ readOnly: false });
-      //     targetContentManager.replace(index, length, text);
-      //     codeEditor.updateOptions({ readOnly: true });
-      //   },
-      //   onDelete(index, length) {
-      //     codeEditor.updateOptions({ readOnly: false });
-      //     targetContentManager.delete(index, length);
-      //     codeEditor.updateOptions({ readOnly: true });
-      //   },
-      // });
-    }
     function setZIndex() {
       let elem = document.getElementById("drag");
       elem.addEventListener("dragend", function(event) {
@@ -251,35 +113,18 @@ export default {
         },
       });
     }
-    const getExstension = (path) => {
-      console.log("path", path);
-      return path.split(".").pop();
-    };
-    const showCode = async (path) => {
-      const ext = getExstension(path);
-      let lang;
-      createElemen(path);
-      const code = get(path).then((code) => {
-        console.log("kodenya 1", code);
-        detectLang(ext).then((lang) => {
-          console.log("kodenya", code);
-          initEditor(path, code, lang, "monokai-transparent-2");
-        });
-      });
-    };
 
     const getFile = (blobs) => {
       const panjang = blobs.length;
+      console.log(blobs);
       Promise.all(
         blobs.map(async (blob, i) => {
           if (blob.name) {
             blob.text().then((text) => {
-              // if (panjang === i + 1) {
-              //   initEditor("editor-section", text, "javascript", "vs-dark");
-              // }
               set(blob.webkitRelativePath, text);
             });
           }
+          folderTree.value.push(addNode(blob));
           folder.value.push(blob.webkitRelativePath);
         })
       );
@@ -324,12 +169,6 @@ export default {
       });
     }
 
-    // function removeElement(className) {
-    //   var elements = document.getElementsByClassName(className);
-    //   while (elements.length > 0) {
-    //     elements[0].parentNode.removeChild(elements[0]);
-    //   }
-    // }
     onMounted(() => {
       initEditor(
         "editor-section",
@@ -337,6 +176,13 @@ export default {
         "javascript",
         "vs-dark"
       );
+
+      nodes.value.push({
+        name: "2.txt",
+        size: 0,
+        type: "file",
+        path: "/storage/test/asdf/2.txt",
+      });
       changeTheme();
       addResize(".resize");
       addResize(".xterm-screen");
@@ -344,7 +190,7 @@ export default {
       setZIndex();
     });
 
-    return { showFolder, folder, showCode };
+    return { showFolder, folder, showCode, tree, folderTree };
   },
 };
 </script>
