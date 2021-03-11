@@ -24,7 +24,7 @@ export default function initEditor(el, val, lang, theme) {
     automaticLayout: true,
     value: val ?? 'function hello(){\n return\n "world" \n}',
     language: lang ?? "javascript",
-    theme: theme ?? "vs-dark",
+    theme: theme ?? "monokai-transparent-2",
     minimap: {
       enabled: false,
     },

@@ -63,14 +63,26 @@ export default {
     //   });
     // }
 
+    function isAlreadyCollab(el) {
+      let elem = document.getElementById(el);
+      if (elem) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    let idEl = Math.round(Math.random() * 10000);
     function openCollab() {
-      let id = Math.round(Math.random() * 10000);
-      createElement(id);
-      initEditor(id);
+      if (!isAlreadyCollab(idEl)) {
+        createElement(idEl);
+        initEditor(idEl);
+      }
     }
     function openCollabExist(id) {
-      createElement(id);
-      initEditor(id);
+      if (!isAlreadyCollab(id)) {
+        createElement(id);
+        initEditor(id);
+      }
     }
     function clearProject() {
       clear();
