@@ -22,7 +22,7 @@ let codeEditor = null;
 export default function initEditor(el, val, lang, theme) {
   codeEditor = monaco.editor.create(document.getElementById(el), {
     automaticLayout: true,
-    value: val ?? 'function hello(){\n return\n "world" \n}',
+    value: val ?? 'function hello(){\n return "world" \n}',
     language: lang ?? "javascript",
     theme: theme ?? "monokai-transparent-2",
     minimap: {
