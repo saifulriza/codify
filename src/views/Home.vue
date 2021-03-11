@@ -2,8 +2,14 @@
   <div id="container-fluid">
     <div class="row m-2">
       <div class="col-xl-2 drag resize">
-        <div class="btn btn-success" @click="showFolder">
-          Open folder
+        <div class="btn btn-success btn-sm m-2" @click="showFolder">
+          Open
+        </div>
+        <div class="btn btn-danger btn-sm m-2" @click="openCollab">
+          Collab
+        </div>
+        <div class="btn btn-danger btn-sm m-2" @click="clearProject">
+          New
         </div>
         <ul id="demo">
           <file-view
@@ -27,7 +33,7 @@ import "bootstrap";
 import Terminal from "@/components/Terminal";
 import FolderList from "@/components/FolderList";
 import { onMounted, ref } from "vue";
-import { get, set } from "idb-keyval";
+import { get, set, clear } from "idb-keyval";
 import interact from "interactjs";
 import { directoryOpen } from "browser-fs-access";
 import { editor } from "monaco-editor";
@@ -35,6 +41,9 @@ import { editor } from "monaco-editor";
 import { addNode, tree } from "@/utils/Tree";
 import fileView from "@/components/FileView";
 import showCode from "@/utils/showCode";
+import createElement from "@/utils/createElement";
+import initEditor from "@/utils/initEditor";
+import { useRoute } from "vue-router";
 export default {
   name: "Home",
   components: {
@@ -45,6 +54,7 @@ export default {
   setup(props, ctx) {
     let folder = ref([]);
     let folderTree = ref([]);
+    const route = useRoute();
 
     // function setZIndex() {
     //   let elem = document.getElementById("drag");
@@ -52,6 +62,20 @@ export default {
     //     event.target.style.zIndex = "2";
     //   });
     // }
+
+    function openCollab() {
+      let id = Math.round(Math.random() * 10000);
+      createElement(id);
+      initEditor(id);
+    }
+    function openCollabExist(id) {
+      createElement(id);
+      initEditor(id);
+    }
+    function clearProject() {
+      clear();
+      tree.value = {};
+    }
 
     function addDrag(el) {
       const position = { x: 0, y: 0 };
@@ -137,10 +161,20 @@ export default {
       addResize(".xterm-screen");
       addDrag(".drag");
       addResize(".resize");
-      // setZIndex();
+      if (route.query.id) {
+        openCollabExist(route.query.id);
+      }
     });
 
-    return { showFolder, folder, showCode, tree, folderTree };
+    return {
+      showFolder,
+      folder,
+      showCode,
+      tree,
+      folderTree,
+      clearProject,
+      openCollab,
+    };
   },
 };
 </script>
