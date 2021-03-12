@@ -5,9 +5,9 @@
         <div class="btn btn-success btn-sm m-2" @click="showFolder">
           Open
         </div>
-        <div class="btn btn-danger btn-sm m-2" @click="openCollab">
+        <!-- <div class="btn btn-danger btn-sm m-2" @click="openCollab">
           Collab
-        </div>
+        </div> -->
         <div class="btn btn-danger btn-sm m-2" @click="clearProject">
           New
         </div>
@@ -31,8 +31,8 @@
 <script>
 import "bootstrap";
 
-import Terminal from "@/components/Terminal";
-import FolderList from "@/components/FolderList";
+// import Terminal from "@/components/Terminal";
+// import FolderList from "@/components/FolderList";
 import { onMounted, ref } from "vue";
 import { get, set, clear } from "idb-keyval";
 import interact from "interactjs";
@@ -41,7 +41,7 @@ import { editor } from "monaco-editor";
 
 import { addNode, tree } from "@/utils/Tree";
 import fileView from "@/components/FileView";
-import showCode from "@/utils/showCode";
+// import showCode from "@/utils/showCode";
 import createElement from "@/utils/createElement";
 import initEditor from "@/utils/initEditor";
 import { useRoute } from "vue-router";
@@ -51,8 +51,8 @@ export default {
   name: "Home",
   components: {
     fileView,
-    Terminal,
-    FolderList,
+    // Terminal,
+    // FolderList,
   },
   setup(props, ctx) {
     let folder = ref([]);
@@ -190,7 +190,7 @@ export default {
     return {
       showFolder,
       folder,
-      showCode,
+      // showCode,
       tree,
       folderTree,
       clearProject,
