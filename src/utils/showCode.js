@@ -4,7 +4,7 @@ import checkElement from "@/utils/checkElement";
 import detectLang from "@/utils/LanguangeDetect";
 import { editor, KeyCode, KeyMod } from "monaco-editor";
 import removeElement from "@/utils/removeElement";
-import { get, set, fileSave } from "idb-keyval";
+import { get, set } from "idb-keyval";
 let Editor = null;
 
 async function writeFile(fileHandle, contents) {
@@ -87,6 +87,10 @@ function addEditor(el, val, lang) {
       console.error(e);
     }
   });
+
+  //   Editor.onDidChangeModelContent(function(e) {
+  //     console.log("event", e);
+  //   });
 }
 export default async function showCode(path) {
   const ext = getExstension(path);

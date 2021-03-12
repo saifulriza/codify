@@ -21,6 +21,7 @@
         </ul>
       </div>
       <div class="col-xl-10">
+        <div class="row" id="base-tab"></div>
         <div id="base-editor"></div>
       </div>
     </div>
@@ -44,6 +45,7 @@ import showCode from "@/utils/showCode";
 import createElement from "@/utils/createElement";
 import initEditor from "@/utils/initEditor";
 import { useRoute } from "vue-router";
+import checkSupport from "@/utils/checkSupport";
 
 export default {
   name: "Home",
@@ -170,12 +172,18 @@ export default {
     }
 
     onMounted(() => {
-      changeTheme();
-      addResize(".xterm-screen");
-      addDrag(".drag");
-      addResize(".resize");
-      if (route.query.id) {
-        openCollabExist(route.query.id);
+      if (checkSupport()) {
+        changeTheme();
+        addResize(".xterm-screen");
+        addDrag(".drag");
+        addResize(".resize");
+        if (route.query.id) {
+          openCollabExist(route.query.id);
+        }
+      } else {
+        alert(
+          "browser anda tidak disupport, silahkan gunakan chrome versi terbaru atau edge"
+        );
       }
     });
 
@@ -192,25 +200,6 @@ export default {
 };
 </script>
 <style lang="scss">
-// .overflow-x {
-//   overflow-x: scroll;
-//   overflow-y: hidden;
-// }
-
-// .overflow-x::-webkit-scrollbar {
-//   width: 12px;
-//   background-color: #f5f5f5;
-// }
-// .overflow-x::-webkit-scrollbar-thumb {
-//   border-radius: 10px;
-//   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-//   background-color: #585858;
-// }
-// .overflow-x::-webkit-scrollbar-track {
-//   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-//   border-radius: 10px;
-//   background-color: #f5f5f5;
-// }
 ul {
   list-style: none;
 }
