@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import "bootstrap";
+// import "bootstrap";
 
 // import Terminal from "@/components/Terminal";
 // import FolderList from "@/components/FolderList";
@@ -200,6 +200,7 @@ export default {
 };
 </script>
 <style lang="scss">
+// @import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 ul {
   list-style: none;
 }
