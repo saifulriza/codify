@@ -1,9 +1,31 @@
 import removeElement from "@/utils/removeElement";
+import interact from "interactjs";
 
 function createScript() {
   var script = document.createElement("script");
   script.innerHTML = removeElement;
   document.head.appendChild(script);
+}
+function addResize(el) {
+  interact(el).resizable({
+    edges: { top: true, left: true, bottom: true, right: true },
+    listeners: {
+      move: function(event) {
+        let { x, y } = event.target.dataset;
+
+        x = (parseFloat(x) || 0) + event.deltaRect.left;
+        y = (parseFloat(y) || 0) + event.deltaRect.top;
+
+        Object.assign(event.target.style, {
+          width: `${event.rect.width}px`,
+          height: `${event.rect.height}px`,
+          transform: `translate(${x}px, ${y}px)`,
+        });
+
+        Object.assign(event.target.dataset, { x, y });
+      },
+    },
+  });
 }
 
 export default function createElemen(id) {
@@ -13,12 +35,12 @@ export default function createElemen(id) {
   let elem = document.createElement("div");
   let spanTitle = document.createElement("span");
 
-  parent.setAttribute("class", "resize p-2 m-2");
+  parent.setAttribute("class", "drag p-2 m-2");
 
   elem.setAttribute("id", id);
   elem.setAttribute(
     "class",
-    "drag p-2 m-2 editor-section text-white font-weight-bold"
+    "resize p-2 m-2 editor-section text-white font-weight-bold"
   );
   elem.setAttribute(
     "style",
@@ -39,4 +61,5 @@ export default function createElemen(id) {
   parent.appendChild(elem);
 
   base.appendChild(parent);
+  addResize("resize");
 }

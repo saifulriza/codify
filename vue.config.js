@@ -1,6 +1,46 @@
 const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const incstr = require("incstr");
 const path = require("path");
+const createUniqueIdGenerator = () => {
+  const index = {};
+
+  const generateNextId = incstr.idGenerator({
+    alphabet: "abcdefghijklmnopqrstuvwxyz0123456789_-",
+  });
+
+  return (name) => {
+    if (index[name]) {
+      return index[name];
+    }
+
+    let nextId;
+
+    do {
+      nextId = generateNextId();
+    } while (/^[0-9_-]/.test(nextId));
+
+    index[name] = generateNextId();
+
+    return index[name];
+  };
+};
+
+const idLocal = createUniqueIdGenerator(),
+  idComponent = createUniqueIdGenerator();
+
+const generateScopedName = (localName, resourcePath) => {
+  const componentName = resourcePath
+    .split("/")
+    .slice(-2)
+    .join("/");
+  return idComponent(componentName).toUpperCase() + idLocal(localName);
+};
+
+const getLocalIdent = (context, localIdentName, localName) =>
+  generateScopedName(localName, context.resourcePath);
+global.getLocalIdent = getLocalIdent;
+
 module.exports = {
   css: {
     requireModuleExtension: true,
@@ -9,13 +49,12 @@ module.exports = {
         additionalData: `@import "./node_modules/bootstrap/scss/bootstrap";`,
       },
       css: {
-        // Note: the following config format is different between Vue CLI v4 and v3
-        // For Vue CLI v3 users, please refer to css-loader v1 documentations
-        // https://github.com/webpack-contrib/css-loader/tree/v1.0.1
         modules: {
-          localIdentName: "[name]-[hash]",
+          getLocalIdent: (context, localIdentName, localName, options) => {
+            return generateScopedName(localName, context.resourcePath + "");
+          },
         },
-        localsConvention: "camelCaseOnly",
+        localsConvention: "asIs",
       },
     },
   },

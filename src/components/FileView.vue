@@ -2,8 +2,11 @@
   <li>
     <div
       :class="{
-        'btn btn-outline-success btn-sm m-1': isFolder,
-        'btn btn-outline-primary btn-sm m-1': !isFolder,
+        [$style['btn']]: true,
+        [$style['btn-sm']]: true,
+        [$style['m-1']]: true,
+        [$style['btn-outline-success']]: isFolder,
+        [$style['btn-outline-primary']]: !isFolder,
       }"
       @click="isFolder ? toggle() : showCode(file.path)"
       @dblclick="makeFolder"
@@ -27,7 +30,7 @@
 </template>
 
 <script>
-import { computed, ref, onMounted, watch } from "vue";
+import { computed, ref } from "vue";
 import showCode from "@/utils/showCode";
 export default {
   name: "fileView",
@@ -67,11 +70,6 @@ export default {
         isOpen.value = true;
       }
     }
-    watch(
-      () => props.data,
-      (first, second) => {}
-    );
-    onMounted(() => {});
     return {
       file,
       isFolder,
@@ -83,3 +81,11 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.text-white {
+  color: white;
+}
+</style>
+<style module lang="scss">
+@import "../../node_modules/bootstrap/scss/bootstrap";
+</style>

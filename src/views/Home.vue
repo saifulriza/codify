@@ -1,14 +1,33 @@
 <template>
-  <div id="container-fluid">
-    <div class="row m-2">
-      <div class="col-xl-2 drag resize">
-        <div class="btn btn-success btn-sm m-2" @click="showFolder">
+  <div>
+    <div :class="[$style['row'], $style['m-2']]">
+      <div
+        :class="[$style['col-xl-12'], $style['drag'], $style['resize']]"
+        class="drag resize"
+      >
+        <div
+          :class="[
+            $style['btn'],
+            $style['btn-success'],
+            $style['btn-sm'],
+            $style['m-2'],
+          ]"
+          @click="showFolder"
+        >
           Open
         </div>
         <!-- <div class="btn btn-danger btn-sm m-2" @click="openCollab">
           Collab
         </div> -->
-        <div class="btn btn-danger btn-sm m-2" @click="clearProject">
+        <div
+          :class="[
+            $style['btn'],
+            $style['btn-danger'],
+            $style['btn-sm'],
+            $style['m-2'],
+          ]"
+          @click="clearProject"
+        >
           New
         </div>
         <ul id="demo">
@@ -20,8 +39,8 @@
           ></file-view>
         </ul>
       </div>
-      <div class="col-xl-10">
-        <div class="row" id="base-tab"></div>
+      <div :class="[$style['col-xl-10']]">
+        <div :class="[$style['row']]" id="base-tab"></div>
         <div id="base-editor"></div>
       </div>
     </div>
@@ -29,10 +48,6 @@
 </template>
 
 <script>
-// import "bootstrap";
-
-// import Terminal from "@/components/Terminal";
-// import FolderList from "@/components/FolderList";
 import { onMounted, ref } from "vue";
 import { get, set, clear } from "idb-keyval";
 import interact from "interactjs";
@@ -41,7 +56,7 @@ import { editor } from "monaco-editor";
 
 import { addNode, tree } from "@/utils/Tree";
 import fileView from "@/components/FileView";
-// import showCode from "@/utils/showCode";
+
 import createElement from "@/utils/createElement";
 import initEditor from "@/utils/initEditor";
 import { useRoute } from "vue-router";
@@ -51,20 +66,11 @@ export default {
   name: "Home",
   components: {
     fileView,
-    // Terminal,
-    // FolderList,
   },
-  setup(props, ctx) {
+  setup() {
     let folder = ref([]);
     let folderTree = ref([]);
     const route = useRoute();
-
-    // function setZIndex() {
-    //   let elem = document.getElementById("drag");
-    //   elem.addEventListener("dragend", function(event) {
-    //     event.target.style.zIndex = "2";
-    //   });
-    // }
 
     function isAlreadyCollab(el) {
       let elem = document.getElementById(el);
@@ -174,7 +180,6 @@ export default {
     onMounted(() => {
       if (checkSupport()) {
         changeTheme();
-        addResize(".xterm-screen");
         addDrag(".drag");
         addResize(".resize");
         if (route.query.id) {
@@ -190,7 +195,6 @@ export default {
     return {
       showFolder,
       folder,
-      // showCode,
       tree,
       folderTree,
       clearProject,
@@ -199,19 +203,22 @@ export default {
   },
 };
 </script>
+
 <style lang="scss">
-// @import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 ul {
   list-style: none;
 }
 .editor-section {
   border: 1px solid rgb(92, 92, 92);
 }
-
 .monaco-scrollable-element .editor-scrollable {
   background: transparent !important;
 }
 .monaco-remote-cursor {
   background: none !important;
 }
+</style>
+
+<style module lang="scss">
+@import "../../node_modules/bootstrap/scss/bootstrap";
 </style>
